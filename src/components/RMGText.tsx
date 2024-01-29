@@ -5,7 +5,7 @@ interface RMGTextProps {
 }
 
 const RMGText: React.FC<RMGTextProps> = ({ children }) => {
-    return <p>{children}</>;
+    return <p>{children}</p>;
 };
 
 export default RMGText;
