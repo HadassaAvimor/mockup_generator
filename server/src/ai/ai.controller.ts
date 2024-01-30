@@ -1,15 +1,17 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AiService } from './ai.service';
-
-@Controller('ai')
+import { generateGPTPrompt } from './prompt';
+@Controller('api')
 export class AiController {
     constructor(private readonly aiService: AiService) { }
 
 
-    @Post('process-input')
-    async processInput(@Body() body: { userInput: string }) {
-        return await this.aiService.generateJsxCode(body.userInput);
+    @Post('/generate-mockup')
+    async generate_mockup(@Body() body: { userInput: string }) {
+        const prompt  = generateGPTPrompt(body.userInput)
+        return await this.aiService.generateJsxCode(prompt);
     }
 
 }
+
 

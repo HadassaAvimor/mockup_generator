@@ -1,22 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import {Configuration, OpenAIApi} from 'openai';
+import OpenAI from 'openai';
+
+import dotenv from 'dotenv';
+dotenv.config();
+
 @Injectable()
 export class AiService {
-    private openai;
+    private openai: OpenAI;
 
     constructor() {
-        const configuration = new Configuration({
-            apiKey: process.env.OPENAI_API_KEY,
-        });
-        this.openai = new OpenAIApi(configuration);
+        this.openai = new OpenAI({apiKey:"OPENAI_API_KEY"});
     }
 
     async generateJsxCode(userInput: string): Promise<string> {
-        const response = await this.openai.createCompletion({
-            model: 'text-davinci-003', 
-            prompt: userInput,
-            max_tokens: 150,
-        });
-        return response.data.choices[0].text.trim();
+        try {
+            const response = await this.openai.completions.create({
+                model: "gpt-3.5-turbo-instruct",
+                prompt: userInput,
+                max_tokens: 150,
+            });
+
+            if (response && response.choices && response.choices.length > 0) {
+                return response.choices[0].text.trim();
+            } else {
+                throw new Error('No response from OpenAI');
+            }
+        } catch (error) {
+            console.error('Error generating JSX code:', error);
+            throw error;
+        }
     }
 }
+
